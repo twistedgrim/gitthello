@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/gorenje/dotenv.git
+  revision: a546053e896cdb44b1341c453f8e3ed93aab6db4
+  branch: squaure_brackets
+  specs:
+    dotenv (0.10.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -14,7 +21,6 @@ GEM
     coderay (1.1.0)
     daemons (1.1.9)
     descendants_tracker (0.0.3)
-    dotenv (0.10.0)
     eventmachine (1.0.3)
     factory_girl (4.4.0)
       activesupport (>= 3.0.0)
@@ -119,7 +125,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  dotenv
+  dotenv!
   factory_girl
   github_api
   haml

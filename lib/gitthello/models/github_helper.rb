@@ -2,15 +2,15 @@ module Gitthello
   class GithubHelper
     attr_reader :issue_bucket, :backlog_bucket
 
-    def initialize
-      @github = Github.new(:oauth_token => ENV['GITHUB_ACCESS_TOKEN'])
+    def initialize(oauth_token, repo_for_new_cards, repos_to_consider)
+      @github            = Github.new(:oauth_token => oauth_token)
+      @user, @repo       = repo_for_new_cards.split(/\//)
+      @repos_to_consider = repos_to_consider
     end
 
-    def open_issue(title, desc)
-      user, repo = ENV['GITHUB_REPO_FOR_NEW_CARDS'].split(/\//)
+    def create_issue(title, desc)
       @github.issues.
-        create( :user => user, :repo => repo,
-                :title => title, :body => desc)
+        create( :user => @user, :repo => @repo, :title => title, :body => desc)
     end
 
     def issue_closed?(user, repo, number)
@@ -24,7 +24,7 @@ module Gitthello
     def retrieve_issues
       @issue_bucket, @backlog_bucket = [], []
 
-      ENV['GITHUB_REPOS'].split(/,/).map { |a| a.split(/\//)}.
+      @repos_to_consider.split(/,/).map { |a| a.split(/\//)}.
         each do |repo_owner,repo_name|
         puts "Checking #{repo_owner}/#{repo_name}"
         repeatthis do
@@ -43,6 +43,22 @@ module Gitthello
 
       puts "Found #{@issue_bucket.count} todos"
       puts "Found #{@backlog_bucket.count} backlog"
+    end
+
+    def new_issues_to_trello(trello_helper)
+      issue_bucket.each do |repo_name, issue|
+        next if trello_helper.has_card?(issue)
+        prefix = repo_name.sub(/^mops./,'').capitalize
+        trello_helper.create_todo_card("%s: %s" % [prefix,issue["title"]],
+                                        issue["body"], issue["html_url"])
+      end
+
+      backlog_bucket.each do |repo_name, issue|
+        next if trello_helper.has_card?(issue)
+        prefix = repo_name.sub(/^mops./,'').capitalize
+        trello_helper.create_backlog_card("%s: %s" % [prefix,issue["title"]],
+                                          issue["body"], issue["html_url"])
+      end
     end
 
     private

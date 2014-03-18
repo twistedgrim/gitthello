@@ -12,7 +12,7 @@ gem 'librato-rack'
 gem 'github_api'
 gem 'ruby-trello', '~> 1.1.0'
 gem 'unicorn'
-gem 'dotenv'
+gem 'dotenv', :git => 'https://github.com/gorenje/dotenv.git', :branch => 'squaure_brackets'
 
 group :test do
   gem 'rack-test'

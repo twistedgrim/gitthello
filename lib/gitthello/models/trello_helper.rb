@@ -2,11 +2,12 @@ module Gitthello
   class TrelloHelper
     attr_reader :list_todo, :list_backlog, :list_done, :github_urls, :board
 
-    def initialize
+    def initialize(token, dev_key, board_name)
       Trello.configure do |cfg|
-        cfg.member_token         = ENV['TRELLO_MEMBER_TOKEN']
-        cfg.developer_public_key = ENV['TRELLO_DEV_KEY']
+        cfg.member_token         = token
+        cfg.developer_public_key = dev_key
       end
+      @board_name = board_name
     end
 
     def setup
@@ -29,6 +30,14 @@ module Gitthello
       @github_urls.include?(issue["html_url"])
     end
 
+    def create_todo_card(name, desc, issue_url)
+      create_card_in_list(name, desc, issue_url, list_todo.id)
+    end
+
+    def create_backlog_card(name, desc, issue_url)
+      create_card_in_list(name, desc, issue_url, list_backlog.id)
+    end
+
     #
     # Close github issues that have been moved to the done list
     #
@@ -38,18 +47,6 @@ module Gitthello
         next if github_details.nil?
         user,repo,_,number = github_details.url.split(/\//)[3..-1]
         github_helper.close_issue(user,repo,number)
-      end
-    end
-
-    def all_cards_not_at_github
-      board.lists.map do |a|
-        a.cards.map do |card|
-          obtain_github_details(card).nil? ? card : nil
-        end.compact
-      end.flatten.reject do |card|
-        # ignore new cards in the Done list - for these we don't
-        # need to create github issues
-        card.list_id == list_done.id
       end
     end
 
@@ -67,7 +64,22 @@ module Gitthello
       end
     end
 
+    def new_cards_to_github(github_helper)
+      all_cards_not_at_github.each do |card|
+        issue = github_helper.
+          create_issue(card.name,
+                       card.desc + "\n\n\n[Added by trello](#{card.url})")
+        card.add_attachment(issue.html_url, "github")
+      end
+    end
+
     private
+
+    def create_card_in_list(name, desc, url, list_id)
+      Trello::Card.
+        create( :name => name, :list_id => list_id, :desc => desc).
+        add_attachment(url, "github")
+    end
 
     def obtain_github_details(card)
       card.attachments.select{ |a| a.name == "github"}.first
@@ -75,7 +87,19 @@ module Gitthello
 
     def retrieve_board
       Trello::Board.all.
-        select { |b| b.name == ENV['TRELLO_BOARD_NAME'] }.first
+        select { |b| b.name == @board_name }.first
+    end
+
+    def all_cards_not_at_github
+      board.lists.map do |a|
+        a.cards.map do |card|
+          obtain_github_details(card).nil? ? card : nil
+        end.compact
+      end.flatten.reject do |card|
+        # ignore new cards in the Done list - for these we don't
+        # need to create github issues
+        card.list_id == list_done.id
+      end
     end
 
     def all_github_urls

@@ -10,8 +10,8 @@ require 'dotenv'
 
 Dotenv.load # load the .env file
 
-Dir[File.join(File.dirname(__FILE__), 'lib', '*.rb')].each { |f| load f }
-Dir[File.join(File.dirname(__FILE__), 'lib', 'tasks','*.rake')].each { |f| load f }
+require_relative 'lib/gitthello.rb'
+Dir[File.join(File.dirname(__FILE__), 'lib', 'gitthello', 'tasks','*.rake')].each { |f| load f }
 
 task :default => :test
 
