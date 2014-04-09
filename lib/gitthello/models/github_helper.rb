@@ -21,6 +21,10 @@ module Gitthello
       @github.issues.edit(user, repo, number.to_i, :state => "closed")
     end
 
+    def get_issue(user, repo, number)
+      @github.issues.get(user, repo, number.to_i)
+    end
+
     def retrieve_issues
       @issue_bucket, @backlog_bucket = [], []
 

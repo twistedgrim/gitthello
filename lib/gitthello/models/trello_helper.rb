@@ -39,14 +39,27 @@ module Gitthello
     end
 
     #
-    # Close github issues that have been moved to the done list
+    # Close github issues that have been moved to the done list but only
+    # if the ticket has been reopened, i.e. updated_at timestamp is
+    # newer than the card.
     #
     def close_issues(github_helper)
       list_done.cards.each do |card|
         github_details = card.attachments.select{ |a| a.name == "github"}.first
         next if github_details.nil?
         user,repo,_,number = github_details.url.split(/\//)[3..-1]
-        github_helper.close_issue(user,repo,number)
+        issue = github_helper.get_issue(user,repo,number)
+
+        if card.last_activity_date > DateTime.strptime(issue.updated_at)
+          # if the card was moved more recently than the issue was updated,
+          # then close the issue
+          github_helper.close_issue(user,repo,number)
+        else
+          # if the issue was updated more recently than the card and it's
+          # open, then move the card to the todo list, i.e. the issue
+          # was reopened.
+          card.move_to_list(list_todo) if issue.state == "open"
+        end
       end
     end
 
