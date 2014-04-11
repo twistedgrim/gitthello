@@ -14,7 +14,7 @@ module Gitthello
     end
 
     def issue_closed?(user, repo, number)
-      @github.issues.get(user,repo,number.to_i).state == "closed"
+      get_issue(user,repo,number).state == "closed"
     end
 
     def close_issue(user, repo, number)
@@ -22,7 +22,22 @@ module Gitthello
     end
 
     def get_issue(user, repo, number)
+      return if number.to_i == 0
       @github.issues.get(user, repo, number.to_i)
+    end
+
+    def add_trello_url(issue, url)
+      owner, repo, number = repo_owner(issue), repo_name(issue), issue.number
+      description = get_issue(owner,repo,number).body.body || ""
+
+      unless description =~ /\[Trello Card\]/ or
+          description =~ /\[Added by trello\]/
+        repeatthis do
+          @github.issues.
+            edit(owner, repo, number.to_i,
+                 :body => description + "\n\n\n[Trello Card](#{url})")
+        end
+      end
     end
 
     def retrieve_issues
@@ -53,19 +68,35 @@ module Gitthello
       issue_bucket.each do |repo_name, issue|
         next if trello_helper.has_card?(issue)
         prefix = repo_name.sub(/^mops./,'').capitalize
-        trello_helper.create_todo_card("%s: %s" % [prefix,issue["title"]],
-                                        issue["body"], issue["html_url"])
+        card = trello_helper.
+          create_todo_card("%s: %s" % [prefix,issue["title"]],
+                           issue["body"], issue["html_url"])
+        add_trello_url(issue, card.url)
       end
 
       backlog_bucket.each do |repo_name, issue|
         next if trello_helper.has_card?(issue)
         prefix = repo_name.sub(/^mops./,'').capitalize
-        trello_helper.create_backlog_card("%s: %s" % [prefix,issue["title"]],
-                                          issue["body"], issue["html_url"])
+        card = trello_helper.
+          create_backlog_card("%s: %s" % [prefix,issue["title"]],
+                              issue["body"], issue["html_url"])
+        add_trello_url(issue, card.url)
       end
     end
 
     private
+
+    def repo_owner(issue)
+      # assumes the that the url is something like:
+      #   https://api.github.com/repos/<repo_owner>/<repo_name>/issues/<number>
+      issue["url"].split("/")[-4]
+    end
+
+    def repo_name(issue)
+      # assumes the that the url is something like:
+      #   https://api.github.com/repos/<repo_owner>/<repo_name>/issues/<number>
+      issue["url"].split("/")[-3]
+    end
 
     def repeatthis(cnt=5,&block)
       last_exception = nil

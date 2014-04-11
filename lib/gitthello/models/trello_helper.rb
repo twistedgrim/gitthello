@@ -45,8 +45,9 @@ module Gitthello
     #
     def close_issues(github_helper)
       list_done.cards.each do |card|
-        github_details = card.attachments.select{ |a| a.name == "github"}.first
+        github_details = obtain_github_details(card)
         next if github_details.nil?
+
         user,repo,_,number = github_details.url.split(/\//)[3..-1]
         issue = github_helper.get_issue(user,repo,number)
 
@@ -79,28 +80,46 @@ module Gitthello
 
     def new_cards_to_github(github_helper)
       all_cards_not_at_github.each do |card|
-        issue = github_helper.
-          create_issue(card.name,
-                       card.desc + "\n\n\n[Added by trello](#{card.url})")
+        issue = github_helper.create_issue(card.name, card.desc)
+        github_helper.add_trello_url(issue, card.url)
         card.add_attachment(issue.html_url, "github")
+      end
+    end
+
+    def add_trello_link_to_issues(github_helper)
+      board.cards.each do |card|
+        issue = obtain_issue_for_card(card, github_helper)
+        next if issue.nil?
+
+        github_helper.add_trello_url(issue, card.url)
       end
     end
 
     private
 
-    def create_card_in_list(name, desc, url, list_id)
-      Trello::Card.
-        create( :name => name, :list_id => list_id, :desc => desc).
-        add_attachment(url, "github")
-    end
-
     def obtain_github_details(card)
-      card.attachments.select{ |a| a.name == "github"}.first
+      card.attachments.select do |a|
+        a.name == "github" || a.url =~ /https:\/\/github.com.*issues.*/
+      end.first
     end
 
     def retrieve_board
-      Trello::Board.all.
-        select { |b| b.name == @board_name }.first
+      Trello::Board.all.select { |b| b.name == @board_name }.first
+    end
+
+    def create_card_in_list(name, desc, url, list_id)
+      Trello::Card.
+        create(:name => name, :list_id => list_id, :desc => desc).tap do |card|
+        card.add_attachment(url, "github")
+      end
+    end
+
+    def obtain_issue_for_card(card, github_helper)
+      gd = obtain_github_details(card)
+      return if gd.nil?
+
+      user,repo,_,number = gd.url.split(/\//)[3..-1]
+      github_helper.get_issue(user,repo,number)
     end
 
     def all_cards_not_at_github

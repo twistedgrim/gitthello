@@ -6,8 +6,12 @@ module Gitthello
       end
     end
 
-    def doit
-      @boards.map(&:doit)
+    def synchronize
+      @boards.map(&:synchronize)
+    end
+
+    def add_trello_link_to_issues
+      @boards.map(&:add_trello_link_to_issues)
     end
   end
 end

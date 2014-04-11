@@ -10,7 +10,7 @@ module Gitthello
                                         @config.name)
     end
 
-    def doit
+    def synchronize
       puts "==> Handling Board: #{@config.name}"
       @trello_helper.setup
       @trello_helper.close_issues(@github_helper)
@@ -18,6 +18,11 @@ module Gitthello
       @github_helper.retrieve_issues
       @github_helper.new_issues_to_trello(@trello_helper)
       @trello_helper.new_cards_to_github(@github_helper)
+    end
+
+    def add_trello_link_to_issues
+      @trello_helper.setup
+      @trello_helper.add_trello_link_to_issues(@github_helper)
     end
   end
 end
