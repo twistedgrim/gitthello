@@ -24,5 +24,9 @@ module Gitthello
       @trello_helper.setup
       @trello_helper.add_trello_link_to_issues(@github_helper)
     end
+
+    def name
+      @config.name
+    end
   end
 end
