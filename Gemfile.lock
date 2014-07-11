@@ -15,15 +15,9 @@ GEM
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
     addressable (2.3.5)
-    aggregate (0.2.2)
-    backports (3.6.0)
     builder (3.0.4)
     coderay (1.1.0)
-    daemons (1.1.9)
     descendants_tracker (0.0.3)
-    eventmachine (1.0.3)
-    factory_girl (4.4.0)
-      activesupport (>= 3.0.0)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
     github_api (0.11.3)
@@ -34,27 +28,12 @@ GEM
       multi_json (>= 1.7.5, < 2.0)
       nokogiri (~> 1.6.0)
       oauth2
-    haml (4.0.5)
-      tilt
     hashie (2.0.5)
-    hpricot (0.8.6)
     i18n (0.6.9)
-    jasmine (2.0.0)
-      jasmine-core (~> 2.0.0)
-      phantomjs
-      rack (>= 1.2.1)
-      rake
-    jasmine-core (2.0.0)
     json (1.8.1)
     jwt (0.1.11)
       multi_json (>= 1.5)
     kgio (2.9.2)
-    librato-metrics (1.3.0)
-      aggregate (~> 0.2.2)
-      faraday (~> 0.7)
-      multi_json
-    librato-rack (0.4.4)
-      librato-metrics (~> 1.1)
     method_source (0.8.2)
     mime-types (2.2)
     mini_portile (0.5.2)
@@ -70,52 +49,22 @@ GEM
       multi_json (~> 1.3)
       multi_xml (~> 0.5)
       rack (~> 1.2)
-    phantomjs (1.9.7.0)
     pry (0.9.12.6)
       coderay (~> 1.0)
       method_source (~> 0.8)
       slop (~> 3.4)
     rack (1.5.2)
-    rack-protection (1.5.2)
-      rack
-    rack-test (0.6.2)
-      rack (>= 1.0)
     raindrops (0.13.0)
     rake (10.1.1)
     rest-client (1.6.7)
       mime-types (>= 1.16)
-    rr (1.1.2)
     ruby-trello (1.1.0)
       activemodel (~> 3.2.0)
       addressable (~> 2.3)
       json
       oauth (~> 0.4.5)
       rest-client (~> 1.6.7)
-    shoulda (3.5.0)
-      shoulda-context (~> 1.0, >= 1.0.1)
-      shoulda-matchers (>= 1.4.1, < 3.0)
-    shoulda-context (1.1.6)
-    shoulda-let (0.0.5)
-      shoulda
-    shoulda-matchers (2.5.0)
-      activesupport (>= 3.0.0)
-    sinatra (1.4.4)
-      rack (~> 1.4)
-      rack-protection (~> 1.4)
-      tilt (~> 1.3, >= 1.3.4)
-    sinatra-contrib (1.4.2)
-      backports (>= 2.0)
-      multi_json
-      rack-protection
-      rack-test
-      sinatra (~> 1.4.0)
-      tilt (~> 1.3)
     slop (3.5.0)
-    thin (1.6.2)
-      daemons (>= 1.0.9)
-      eventmachine (>= 1.0.0)
-      rack (>= 1.0.0)
-    tilt (1.4.1)
     unicorn (4.8.2)
       kgio (~> 2.6)
       rack
@@ -126,20 +75,8 @@ PLATFORMS
 
 DEPENDENCIES
   dotenv!
-  factory_girl
   github_api
-  haml
-  hpricot
-  jasmine
-  librato-rack
   pry
-  rack-test
   rake
-  rr
   ruby-trello (~> 1.1.0)
-  shoulda
-  shoulda-let
-  sinatra
-  sinatra-contrib
-  thin
   unicorn
