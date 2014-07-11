@@ -70,7 +70,8 @@ module Gitthello
         prefix = repo_name.sub(/^mops./,'').capitalize
         card = trello_helper.
           create_todo_card("%s: %s" % [prefix,issue["title"]],
-                           issue["body"], issue["html_url"])
+                           issue["body"], issue["html_url"],
+                           issue.keys.include?("pull_request"))
         add_trello_url(issue, card.url)
       end
 

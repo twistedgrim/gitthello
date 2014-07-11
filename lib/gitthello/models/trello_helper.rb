@@ -30,8 +30,8 @@ module Gitthello
       @github_urls.include?(issue["html_url"])
     end
 
-    def create_todo_card(name, desc, issue_url)
-      create_card_in_list(name, desc, issue_url, list_todo.id)
+    def create_todo_card(name, desc, issue_url, is_pull_request)
+      create_card_in_list(name, desc, issue_url, list_todo.id, is_pull_request)
     end
 
     def create_backlog_card(name, desc, issue_url)
@@ -107,10 +107,11 @@ module Gitthello
       Trello::Board.all.select { |b| b.name == @board_name }.first
     end
 
-    def create_card_in_list(name, desc, url, list_id)
+    def create_card_in_list(name, desc, url, list_id, is_pull_request = false)
       Trello::Card.
         create(:name => name, :list_id => list_id, :desc => desc).tap do |card|
         card.add_attachment(url, "github")
+        card.add_label("purple") if is_pull_request
       end
     end
 
