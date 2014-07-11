@@ -73,6 +73,8 @@ module Gitthello
           user,repo,_,number = d.url.split(/\//)[3..-1]
           if github_helper.issue_closed?(user,repo,number)
             card.move_to_list(list_done)
+            card.pos = "top"
+            card.save
           end
         end
       end
