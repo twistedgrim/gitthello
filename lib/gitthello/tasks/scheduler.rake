@@ -17,3 +17,10 @@ desc "Archive the done list."
 task :archive_done, :name do |t,args|
   Gitthello::Sync.new.archive_done_in_board(args.name)
 end
+
+desc "Archive the done list but only on Sunday."
+task :archive_done_on_sunday, :name do |t,args|
+  if Time.now.strftime("%A") == "Sunday"
+    Gitthello::Sync.new.archive_done_in_board(args.name)
+  end
+end
