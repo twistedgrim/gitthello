@@ -24,6 +24,18 @@ module Gitthello
 
       @github_urls = all_github_urls
       puts "Found #{@github_urls.count} github urls"
+      self
+    end
+
+    def archive_done
+      old_pos = @list_done.pos
+      @list_done.name = "Done KW#{Time.now.strftime('%W')}"
+      @list_done.save
+      @list_done.close!
+
+      @list_done = Trello::List.create(:name => "Done", :board_id=> @board.id)
+      @list_done.pos = old_pos+1
+      @list_done.save
     end
 
     def has_card?(issue)

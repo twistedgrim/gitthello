@@ -22,6 +22,16 @@ module Gitthello
       @boards.map(&:add_trello_link_to_issues)
     end
 
+    def archive_done_in_board(board_name)
+      repeatthis do
+        @boards.
+          select { |a| a.name == board_name }.
+          map(&:trello_helper).
+          map(&:setup).
+          map(&:archive_done)
+      end
+    end
+
     private
 
     def repeatthis(cnt=5,&block)

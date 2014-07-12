@@ -12,3 +12,8 @@ desc "Synchronize specific board given by name."
 task :sync_board, :name do |t,args|
   Gitthello::Sync.new.synchronize_only_board(args.name)
 end
+
+desc "Archive the done list."
+task :archive_done, :name do |t,args|
+  Gitthello::Sync.new.archive_done_in_board(args.name)
+end

@@ -1,5 +1,7 @@
 module Gitthello
   class Board
+    attr_reader :trello_helper, :github_helper
+
     def initialize(board_config)
       @config = board_config.clone
       @github_helper = GithubHelper.new(Gitthello.configuration.github.token,
