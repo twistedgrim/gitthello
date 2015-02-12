@@ -151,6 +151,13 @@ There are lots.
 Comments are not synchronized. Labels are not synchronized. And lots of other
 things aren't synchronized!
 
+License
+====
+
+Released under the GPLv2.
+
+See https://www.gnu.org/licenses/gpl-2.0 for details.
+
 Contributing to Gitthello
 ====
 
