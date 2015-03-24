@@ -2,6 +2,10 @@ module Gitthello
   class TrelloHelper
     attr_reader :list_todo, :list_backlog, :list_done, :github_urls, :board
 
+    # https://trello.com/docs/api/card/#put-1-cards-card-id-or-shortlink
+    MAX_TEXT_LENGTH=16384
+    TRUNCATION_MESSAGE = "... [truncated by gitthello]"
+
     def initialize(token, dev_key, board_name)
       Trello.configure do |cfg|
         cfg.member_token         = token
@@ -123,7 +127,8 @@ module Gitthello
 
     def create_card_in_list(name, desc, url, list_id, is_pull_request = false)
       Trello::Card.
-        create(:name => name, :list_id => list_id, :desc => desc).tap do |card|
+        create(:name => truncate_text(name), :list_id => list_id,
+               :desc => truncate_text(desc)).tap do |card|
         card.add_attachment(url, "github")
         card.add_label("purple") if is_pull_request
       end
@@ -156,6 +161,14 @@ module Gitthello
           github_details.nil? ? nil : github_details.url
         end.compact
       end.flatten
+    end
+
+    def truncate_text(text)
+      if text && text.length > MAX_TEXT_LENGTH
+        text[0, MAX_TEXT_LENGTH - TRUNCATION_MESSAGE.length] + TRUNCATION_MESSAGE
+      else
+        text
+      end
     end
   end
 end
