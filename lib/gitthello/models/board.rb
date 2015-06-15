@@ -4,13 +4,11 @@ module Gitthello
 
     def initialize(board_config)
       @config = board_config.clone
-      puts @config.marshal_dump
       @list_map = {
         todo: @config.marshal_dump.fetch(:todo_list_name, 'To Do'),
         backlog: @config.marshal_dump.fetch(:backlog_list_name, 'Backlog'),
         done: @config.marshal_dump.fetch(:done_list_name, 'Done')
       }
-      puts @list_map
       @github_helper = GithubHelper.new(Gitthello.configuration.github.token,
                                         @config.repo_for_new_cards,
                                         @config.repos_to_consider)
