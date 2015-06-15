@@ -6,24 +6,25 @@ module Gitthello
     MAX_TEXT_LENGTH=16384
     TRUNCATION_MESSAGE = "... [truncated by gitthello]"
 
-    def initialize(token, dev_key, board_name)
+    def initialize(token, dev_key, board_name, list_map)
       Trello.configure do |cfg|
         cfg.member_token         = token
         cfg.developer_public_key = dev_key
       end
       @board_name = board_name
+      @list_map = list_map
     end
 
     def setup
       @board = retrieve_board
 
-      @list_todo    = @board.lists.select { |a| a.name == 'To Do' }.first
+      @list_todo    = @board.lists.select { |a| a.name == @list_map[:todo] }.first
       raise "Missing trello To Do list" if list_todo.nil?
 
-      @list_backlog = @board.lists.select { |a| a.name == 'Backlog' }.first
+      @list_backlog = @board.lists.select { |a| a.name == @list_map[:backlog] }.first
       raise "Missing trello Backlog list" if list_backlog.nil?
 
-      @list_done    = @board.lists.select { |a| a.name == 'Done' }.first
+      @list_done    = @board.lists.select { |a| a.name == @list_map[:done] }.first
       raise "Missing trello Done list" if list_done.nil?
 
       @github_urls = all_github_urls
@@ -37,7 +38,7 @@ module Gitthello
       @list_done.save
       @list_done.close!
 
-      @list_done = Trello::List.create(:name => "Done", :board_id=> @board.id)
+      @list_done = Trello::List.create(:name => @list_map[:done], :board_id=> @board.id)
       @list_done.pos = old_pos+1
       @list_done.save
     end
