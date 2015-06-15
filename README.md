@@ -130,6 +130,12 @@ Gitthello assumes that the trello board has at least three lists
     Done - where cards are moved to once they have been completed
     Backlog - where issues are created to if they are labeled as backlog
 
+The names of these lists can be set to something other than the default above by setting the environment variables:
+
+    BOARDS[ONE][TODO_LIST_NAME]='To do list name'
+    BOARDS[ONE][BACKLOG_LIST_NAME]='Backlog list name'
+    BOARDS[ONE][DONE_LIST_NAME]='Done list name'
+
 Besides those three lists, a board can have as many lists as it likes. Any
 card created in any list (except done) will create a new issue @ github.
 
