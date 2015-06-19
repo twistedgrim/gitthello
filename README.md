@@ -149,6 +149,11 @@ To run the synchronization task locally:
 This will do the synchronization between github and trello. This is also
 the task that you need to set for the heroku scheduler.
 
+Heroku
+===
+
+[![Deploy To Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+
 Limitations
 ====
 

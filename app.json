@@ -1,0 +1,30 @@
+{
+  "name" : "GitTello sync issues & cards",
+  "description": "Synchronize your github issues with your trello cards",
+  "keywords": [
+    "productivity",
+    "github",
+    "trello"
+  ],
+  "website": "https://github.com/wooga/gittello/blob/master/README.md",
+  "repository": "https://github.com/wooga/gittello",
+  "logo": "http://cdn-mkt.wooga.com/logo/wooga-logo-w.png",
+  "env": {
+    "TRELLO_DEV_KEY": {
+      "description": "Trello Developer Key"
+    },
+    "TRELLO_MEMBER_TOKEN": {
+      "description": "Trello member token"
+    },
+    "GITHUB_ACCESS_TOKEN": {
+      "description": "Access Token for GitHub"
+    },
+    "RACK_ENV": {
+      "description": "Rack environment",
+      "value": "production"
+    }
+  },
+  "addons": [
+    "scheduler"
+  ]
+}
