@@ -154,6 +154,38 @@ Heroku
 
 [![Deploy To Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
+Scheduler Setup
+---
+
+Once the heroku application is configured, you'll also need to add the
+scheduler tasks for doing the synchronization regularly. This is done by
+define schedule tasks that run every ten minutes.
+
+For example, this will sync the Board Name:
+
+    rake sync_board["Board Name"]
+
+where the board name is the same as the name in the configuration.
+
+There should be one task per board, these tasks are all free.
+
+In addition, you can also define a task to run once per day (but it only
+does something on a sunday), to archive your done tasks:
+
+    rake archive_done_on_sunday["Board Name"]
+
+This will remove all done cards and move them to archive list with the
+week number. So you have a clean done list on monday!
+
+Configuration Check Page
+---
+
+By accessing the application at heroku, you'll get an overview of whether
+the configuration is correct. It should be something [like this](https://gitthello.herokuapp.com/).
+
+For this, you'll need to activate a dyno (the free one is sufficient) if it
+wasn't activated automatically in the first place.
+
 Limitations
 ====
 
