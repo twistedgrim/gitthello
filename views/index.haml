@@ -46,12 +46,11 @@ Is usable, i.e. are credentials correct?
         %td= board.name
         %td= board.repo_for_new_cards
         - if @github_usable
-          - owner = board.repo_for_new_cards.split(/\//).first
-          - repo = board.repo_for_new_cards.split(/\//).last
-          %td= @github.issues.list(:user => owner, :repo => repo, :state => "open" ).count
+          %td.github-issues{:"data-repo" => board.repo_for_new_cards }
+            %img{:src => "/img/spinner.gif"}
         - if @trello_usable
-          - brd = Trello::Board.all.select { |b| b.name == board.name }.first
-          %td= brd.lists.count
+          %td.trello-list-count{:"data-board-name" => board.name }
+            %img{:src => "/img/spinner.gif"}
 
 :css
   .error {
@@ -60,3 +59,25 @@ Is usable, i.e. are credentials correct?
   .ok {
      color: green;
   }
+
+:javascript
+  $(document).ready(function() {
+    $(".github-issues").each(function(idx, elem) {
+       jQuery.get("/issues/" + $(elem).data("repo"), {}).
+         error(function() {
+           $(elem).html("-");
+         }).
+         success(function(results) {
+           $(elem).html(results.value);
+         });
+    });
+    $(".trello-list-count").each(function(idx, elem) {
+       jQuery.get("/lists/" + $(elem).data("board-name"), {}).
+         error(function() {
+           $(elem).html("-");
+         }).
+         success(function(results) {
+           $(elem).html(results.value);
+         });
+    });
+  });
