@@ -36,5 +36,9 @@ module Gitthello
     def name
       @config.name
     end
+
+    def repo_for_new_cards
+      @config.repo_for_new_cards
+    end
   end
 end

@@ -1,0 +1,62 @@
+%h2 Github
+
+Is configured?
+- if @github.authenticated?
+  %span.ok Yes
+- else
+  %span.error No
+
+%br
+Usable, i.e. are credentials correct?
+- if @github_usable
+  %span.ok Yes
+- else
+  %span.error No
+
+%h2 Trello
+
+Is configured?
+- if !Trello.client.developer_public_key.blank? and !Trello.client.member_token.blank?
+  %span.ok Yes
+- else
+  %span.error No
+
+%br
+Is usable, i.e. are credentials correct?
+- if @trello_usable
+  %span.ok Yes
+- else
+  %span.error No
+
+%h2 Configured Boards
+
+%table.table
+  %thead
+    %tr.row
+      %th Board Name
+      %th Repo linked to Board
+      - if @github_usable
+        %th Github Issue Open Count
+      - if @trello_usable
+        %th Trello List Count
+
+  %tbody
+    - @boards.each do |board|
+      %tr.row
+        %td= board.name
+        %td= board.repo_for_new_cards
+        - if @github_usable
+          - owner = board.repo_for_new_cards.split(/\//).first
+          - repo = board.repo_for_new_cards.split(/\//).last
+          %td= @github.issues.list(:user => owner, :repo => repo, :state => "open" ).count
+        - if @trello_usable
+          - brd = Trello::Board.all.select { |b| b.name == board.name }.first
+          %td= brd.lists.count
+
+:css
+  .error {
+     color: red;
+  }
+  .ok {
+     color: green;
+  }
