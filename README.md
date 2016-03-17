@@ -6,6 +6,10 @@ Synchronize Github issues with Trello.
 This still work in progress (i.e. there are no tests) but it does seem to
 work if the planets are in the correct alignment.
 
+*UPDATE* If you're thinking of using this, perhaps you should look
+into [Zube.io](http://zube.io) as an alternative. It does a far
+better job of sync'ing github issues with a trello-like board.
+
 Why?
 ====
 
